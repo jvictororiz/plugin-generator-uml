@@ -1,0 +1,23 @@
+<idea-plugin>
+    <id>br.roriz.generator.GeneratorUML</id>
+    <name>Gerador UML</name>
+    <vendor url="joao.victor.roriz@hotmail.com">YourCompany</vendor>
+    <description><![CDATA[
+        Gera diagramas UML de classes e pacotes selecionados (Draw.io).<br>
+        Suporta Java e Kotlin (K2 e clássico).
+    ]]></description>
+
+    <!-- Dependências -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends optional="true" config-file="">org.jetbrains.kotlin</depends>
+
+    <actions>
+        <action id="br.roriz.generator.generatoruml.action.GenerateDiagramAction"
+                class="br.roriz.generator.generatoruml.action.GenerateDiagramAction"
+                text="Gerar diagrama"
+                description="Gera um diagrama (draw.io) da classe ou do pacote selecionado">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
