@@ -7,36 +7,38 @@ class MermaidDiagramGenerator : DiagramGenerator() {
     override fun getExtension() = ".mermaid"
 
     override fun setup(model: UmlModel) {
-        stringBuilder.appendLine("---")
-        stringBuilder.appendLine("title: Diagrama de classes")
-        stringBuilder.appendLine("---")
-        stringBuilder.appendLine("")
         stringBuilder.appendLine("classDiagram")
 
         model.nodes.forEach { node ->
             val nodeName = node.name
 
-            stringBuilder.appendLine("class $nodeName {")
+            val canOpenKey = node.isInterface || node.isEnum || node.fields.isNotEmpty() || node.isSealed
+            val openKey = if(canOpenKey) "{" else ""
+            val closeKey = if(canOpenKey) "}" else ""
+
+            stringBuilder.appendLine("class $nodeName $openKey")
             if (node.isInterface) {
                 stringBuilder.appendLine("  <<interface>>")
             } else if (node.isEnum) {
                 stringBuilder.appendLine("  <<enum>>")
+            } else if(node.isSealed) {
+                stringBuilder.appendLine("  <<sealed>>")
             }
 
             // Campos
             node.fields.forEach { field ->
                 if (node.isEnum) {
-                    stringBuilder.appendLine("  - ${field.name}")
+                    stringBuilder.appendLine("  ${field.operator?.operatorName?:"+"} ${field.name}")
                 } else {
-                    stringBuilder.appendLine("  - ${field.name} : ${field.type}")
+                    stringBuilder.appendLine(" ${field.operator?.operatorName?:"+"} ${field.name} : ${field.type}")
                 }
             }
             // Métodos
             node.methods.forEach { method ->
-                stringBuilder.appendLine("  + ${method.name}() : ${method.dataReturn}")
+                stringBuilder.appendLine("  ${method.operator.operatorName} ${method.name}() ${method.dataReturn}")
             }
 
-            stringBuilder.appendLine("}")
+            stringBuilder.appendLine(closeKey)
         }
 
         model.edges.forEach { edge ->

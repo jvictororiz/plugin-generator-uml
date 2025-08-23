@@ -16,6 +16,7 @@ class PsiClassToUmlModelConverter {
         fun converter(psiClasses: List<PsiClass>): UmlModel {
             val umlModels = psiClasses
                 .map { psiClass -> psiClass.toUmlModel() }
+                .flatten()
                 .populateSuperClass()
                 .populateInterfacesClass()
                 .populateAssociative()

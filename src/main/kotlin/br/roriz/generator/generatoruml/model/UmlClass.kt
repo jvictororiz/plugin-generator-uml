@@ -9,6 +9,7 @@ data class UmlClass(
     val name: String?,
     val isInterface: Boolean = false,
     val isEnum: Boolean = false,
+    val isSealed: Boolean = false,
     val fields: List<Field> = emptyList(),
     val methods: List<Method> = emptyList(),
     val superClass: UmlClass? = null,
@@ -18,11 +19,19 @@ data class UmlClass(
 data class Field(
     val name: String,
     val type: String,
-    val associative: String? = null
+    val associative: String? = null,
+    val operator: TypeOperator?
 )
 
 data class Method(
     val name: String,
     val param: List<Field>,
-    val dataReturn: String
+    val dataReturn: String,
+    val operator: TypeOperator
 )
+
+enum class  TypeOperator(
+    val operatorName: String
+) {
+    PUBLIC("+"), PRIVATE("-"), PROTECTED("#")
+}
