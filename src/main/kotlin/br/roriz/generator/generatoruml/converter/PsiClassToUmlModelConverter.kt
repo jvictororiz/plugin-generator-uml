@@ -39,6 +39,14 @@ class PsiClassToUmlModelConverter {
                         UmlEdge(it.associative.orEmpty(),umlModel.name.orEmpty() , EdgeKind.ASSOCIATION)
                     }
                 }
+
+                if(umlModel.innerFrom.isNotEmpty()) {
+                    edges+= UmlEdge(
+                        from = umlModel.name.orEmpty(),
+                        to = umlModel.innerFrom,
+                        kind = EdgeKind.INNER
+                    )
+                }
             }
             return UmlModel(umlModels, edges)
         }

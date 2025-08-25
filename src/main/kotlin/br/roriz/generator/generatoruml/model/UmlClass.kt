@@ -1,7 +1,5 @@
 package br.roriz.generator.generatoruml.model
 
-import com.jetbrains.rd.generator.nova.PredefinedType
-
 data class UmlModel(val nodes: List<UmlClass>, val edges: List<UmlEdge>)
 
 data class UmlClass(
@@ -13,7 +11,8 @@ data class UmlClass(
     val fields: List<Field> = emptyList(),
     val methods: List<Method> = emptyList(),
     val superClass: UmlClass? = null,
-    val interfaces: List<UmlClass> = emptyList()
+    val interfaces: List<UmlClass> = emptyList(),
+    val innerFrom: String = ""
 )
 
 data class Field(

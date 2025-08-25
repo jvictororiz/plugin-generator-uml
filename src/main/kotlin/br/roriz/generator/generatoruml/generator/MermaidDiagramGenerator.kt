@@ -46,6 +46,7 @@ class MermaidDiagramGenerator : DiagramGenerator() {
                 EdgeKind.EXTENDS -> "<|--"
                 EdgeKind.IMPLEMENTS -> "<|.."
                 EdgeKind.ASSOCIATION -> "-->"
+                EdgeKind.INNER -> ".."
             }
             stringBuilder.appendLine("${edge.to} $arrow ${edge.from}")
         }

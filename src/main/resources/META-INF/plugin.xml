@@ -10,10 +10,10 @@
     </description>
 
     <change-notes>
-        Primeira versão publicada 🚀
+        Suporte a tipos de métodos e sealed class 🚀
     </change-notes>
 
-    <idea-version since-build="252" until-build="252.23892.409"/>
+    <idea-version since-build="232" until-build="243.*"/>
 
 
     <!-- Dependências -->

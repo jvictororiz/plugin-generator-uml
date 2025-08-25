@@ -35,6 +35,7 @@ class PlantUmlDiagramGenerator : DiagramGenerator() {
                 EdgeKind.EXTENDS -> "--|>"
                 EdgeKind.IMPLEMENTS -> "..|>"
                 EdgeKind.ASSOCIATION -> "-->"
+                EdgeKind.INNER -> ".."
             }
             stringBuilder.appendLine("${e.from} $arrow ${e.to}")
         }

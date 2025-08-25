@@ -1,4 +1,4 @@
 package br.roriz.generator.generatoruml.model
 
-enum class EdgeKind { EXTENDS, ASSOCIATION, IMPLEMENTS }
+enum class EdgeKind { EXTENDS, ASSOCIATION, IMPLEMENTS, INNER }
 

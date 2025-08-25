@@ -8,9 +8,14 @@ import com.intellij.lang.jvm.JvmField
 import com.intellij.lang.jvm.JvmMethod
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiField
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtNullableType
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
 import java.util.*
 
 
@@ -21,9 +26,7 @@ fun PsiClass.toUmlModel(): List<UmlClass> {
     )
     excludedMethods.add(name.orEmpty())
     val className = name ?: "<anonymous>"
-    val fields = fields.map {
-        Field(name = it.name, type = it.type.presentableText, operator = it.toTypeOperator())
-    }
+    val fields = this.generateFields()
     val gettersAndSetters = fields.flatMap { field ->
         val propName = field.name
         val capitalized = propName.replaceFirstChar { it.uppercase() }
@@ -61,9 +64,9 @@ fun PsiClass.toUmlModel(): List<UmlClass> {
         fields = fields,
         methods = methods,
         superClass = superClass?.let { UmlClass(name = superClass) },
-        interfaces = interfaces.map { UmlClass(name = it, isInterface = true) }
+        interfaces = interfaces.map { UmlClass(name = it, isInterface = true) },
     )
-    val sealedClasses = if(isSealedClass()) {
+    val sealedClasses = if (isSealedClass()) {
         ClassInheritorsSearch.search(
             this,
             GlobalSearchScope.projectScope(
@@ -78,10 +81,33 @@ fun PsiClass.toUmlModel(): List<UmlClass> {
         }
     } else emptyList()
 
+    val innerClasses = if(this.innerClasses.isNotEmpty()) {
+        this.innerClasses.map {
+            UmlClass(
+                name = "`$className.${it.name}`",
+                fields = it.generateFields(),
+                innerFrom = className
+            )
+        }
+    } else {
+        emptyList()
+    }
+
     return listOf(
         *sealedClasses.toTypedArray(),
+        *innerClasses.toTypedArray(),
         currentClass
     )
+}
+
+private fun PsiClass.generateFields(): List<Field> {
+    return fields.map {
+        Field(
+            name = it.name,
+            type = it.type.presentableText+ if (it.isNullable()) "?" else "",
+            operator = it.toTypeOperator(),
+        )
+    }
 }
 
 fun List<UmlClass>.populateSuperClass(): List<UmlClass> {
@@ -152,4 +178,16 @@ fun JvmField.toTypeOperator(): TypeOperator {
         this.hasModifier(JvmModifier.PUBLIC) -> TypeOperator.PUBLIC
         else -> TypeOperator.PUBLIC // default
     }
+}
+
+fun JvmField.isNullable(): Boolean {
+    if (this is PsiField && this !is KtLightElement<*, *>) {
+        return true
+    }
+    val typeElement = when (val origin = (this as? KtLightElement<*, *>)?.kotlinOrigin) {
+        is KtProperty -> origin.typeReference?.typeElement
+        is KtParameter -> origin.typeReference?.typeElement
+        else -> null
+    }
+    return typeElement is KtNullableType
 }
