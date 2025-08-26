@@ -5,24 +5,26 @@ plugins {
 }
 
 group = "br.roriz.generator"
-version = "1.0.3"
+version = "1.0.6"
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
     intellijPlatform {
         defaultRepositories()
     }
 }
 
 dependencies {
+
     intellijPlatform {
-        // Base IDE = IntelliJ Community (IC) 2025.1
-        create("IC", "2025.1")
+        // Base IDE = IntelliJ Community (IC) 2024.2
+        create("IC", "2024.2")
 
         // Test framework do plugin
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
 
-        // 🔹 Plugins necessários para PSI e UAST
+        // Plugins necessários para PSI e UAST
         bundledPlugin("com.intellij.java")
         bundledPlugin("org.jetbrains.kotlin")
     }
@@ -31,12 +33,9 @@ dependencies {
 intellijPlatform {
     pluginConfiguration {
         ideaVersion {
+            // Mantém compatível com builds futuros
             untilBuild = provider { null }
         }
-
-        changeNotes = """
-            Initial version with Generate Diagram
-        """.trimIndent()
     }
 }
 

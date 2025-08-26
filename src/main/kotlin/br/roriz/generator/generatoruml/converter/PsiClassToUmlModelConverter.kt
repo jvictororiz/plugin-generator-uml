@@ -1,9 +1,9 @@
 package br.roriz.generator.generatoruml.converter
 
-import br.roriz.generator.generatoruml.extension.populateAssociative
-import br.roriz.generator.generatoruml.extension.populateInterfacesClass
-import br.roriz.generator.generatoruml.extension.populateSuperClass
-import br.roriz.generator.generatoruml.extension.toUmlModel
+import br.roriz.generator.generatoruml.util.populateAssociative
+import br.roriz.generator.generatoruml.util.populateInterfacesClass
+import br.roriz.generator.generatoruml.util.populateSuperClass
+import br.roriz.generator.generatoruml.util.toUmlModel
 import br.roriz.generator.generatoruml.model.EdgeKind
 import br.roriz.generator.generatoruml.model.UmlEdge
 import br.roriz.generator.generatoruml.model.UmlModel

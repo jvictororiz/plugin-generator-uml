@@ -12,25 +12,28 @@ class MermaidDiagramGenerator : DiagramGenerator() {
         model.nodes.forEach { node ->
             val nodeName = node.name
 
-            val canOpenKey = node.isInterface || node.isEnum || node.fields.isNotEmpty() || node.isSealed
-            val openKey = if(canOpenKey) "{" else ""
-            val closeKey = if(canOpenKey) "}" else ""
+            val canOpenKey =
+                node.isInterface || node.isEnum || node.fields.isNotEmpty() || node.isSealed || node.methods.isNotEmpty() || node.innerFrom.isNotEmpty()
+            val openKey = if (canOpenKey) "{" else ""
+            val closeKey = if (canOpenKey) "}" else ""
 
             stringBuilder.appendLine("class $nodeName $openKey")
             if (node.isInterface) {
                 stringBuilder.appendLine("  <<interface>>")
             } else if (node.isEnum) {
                 stringBuilder.appendLine("  <<enum>>")
-            } else if(node.isSealed) {
+            } else if (node.isSealed) {
                 stringBuilder.appendLine("  <<sealed>>")
+            } else if (node.innerFrom.isNotBlank()) {
+                stringBuilder.appendLine("  <<inner>>")
             }
 
             // Campos
             node.fields.forEach { field ->
                 if (node.isEnum) {
-                    stringBuilder.appendLine("  ${field.operator?.operatorName?:"+"} ${field.name}")
+                    stringBuilder.appendLine("  ${field.operator?.operatorName ?: "+"} ${field.name}")
                 } else {
-                    stringBuilder.appendLine(" ${field.operator?.operatorName?:"+"} ${field.name} : ${field.type}")
+                    stringBuilder.appendLine(" ${field.operator?.operatorName ?: "+"} ${field.name} : ${field.type}")
                 }
             }
             // Métodos

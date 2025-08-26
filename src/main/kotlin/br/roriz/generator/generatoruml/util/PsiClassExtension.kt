@@ -1,4 +1,4 @@
-package br.roriz.generator.generatoruml.extension
+package br.roriz.generator.generatoruml.util
 
 import br.roriz.generator.generatoruml.model.Field
 import br.roriz.generator.generatoruml.model.Method
@@ -9,13 +9,15 @@ import com.intellij.lang.jvm.JvmMethod
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.searches.ClassInheritorsSearch
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtTypeReference
 import java.util.*
 
 
@@ -46,7 +48,7 @@ fun PsiClass.toUmlModel(): List<UmlClass> {
                     )
                 },
                 operator = method.toTypeOperator(),
-                dataReturn = method.returnType?.presentableText ?: "void"
+                dataReturn = (method.returnType?.presentableText + (if (method.isReturnTypeNullable()) "?" else ""))
             )
         }
     var superClass = superClass?.name
@@ -66,20 +68,6 @@ fun PsiClass.toUmlModel(): List<UmlClass> {
         superClass = superClass?.let { UmlClass(name = superClass) },
         interfaces = interfaces.map { UmlClass(name = it, isInterface = true) },
     )
-    val sealedClasses = if (isSealedClass()) {
-        ClassInheritorsSearch.search(
-            this,
-            GlobalSearchScope.projectScope(
-                project
-            ),
-            true
-        ).toList().map {
-            UmlClass(
-                name = it.name,
-                superClass = currentClass
-            )
-        }
-    } else emptyList()
 
     val innerClasses = if(this.innerClasses.isNotEmpty()) {
         this.innerClasses.map {
@@ -94,17 +82,17 @@ fun PsiClass.toUmlModel(): List<UmlClass> {
     }
 
     return listOf(
-        *sealedClasses.toTypedArray(),
+//        *sealedClasses.toTypedArray(),
         *innerClasses.toTypedArray(),
         currentClass
     )
 }
 
 private fun PsiClass.generateFields(): List<Field> {
-    return fields.map {
+    return fields.filter { it.name != "INSTANCE" }.map {
         Field(
             name = it.name,
-            type = it.type.presentableText+ if (it.isNullable()) "?" else "",
+            type = it.type.presentableText + if (it.isNullable()) "?" else "",
             operator = it.toTypeOperator(),
         )
     }
@@ -190,4 +178,11 @@ fun JvmField.isNullable(): Boolean {
         else -> null
     }
     return typeElement is KtNullableType
+}
+
+fun PsiMethod.isReturnTypeNullable(): Boolean {
+    if (this !is KtLightMethod) return true
+    val ktOrigin = this.kotlinOrigin as? KtFunction ?: return false
+    val typeRef: KtTypeReference? = ktOrigin.typeReference
+    return typeRef?.typeElement is KtNullableType
 }

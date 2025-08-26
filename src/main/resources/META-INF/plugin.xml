@@ -1,20 +1,19 @@
 <idea-plugin>
     <id>br.roriz.generator.GeneratorUML</id>
-    <name>Gerador UML</name>
+    <name>Gerador UML (Mermaid)</name>
     <vendor email="joao.victor.roriz@hotmail.com" url="https://github.com/jvictororiz/plugin-generator-uml">João Victor</vendor>
 
     <description>
         <![CDATA[
-         Plugin para gerar diagramas UML (PlantUML / Mermaid) diretamente do código Kotlin/Java.
+        Plugin to generate UML diagrams (Mermaid) directly from Kotlin/Java code.
         ]]>
     </description>
 
     <change-notes>
-        Suporte a tipos de métodos e sealed class 🚀
+        Innerclass and nullable support in functions and attributes 🚀
     </change-notes>
 
-    <idea-version since-build="232" until-build="243.*"/>
-
+    <idea-version since-build="242" until-build="999.*"/>
 
     <!-- Dependências -->
     <depends>com.intellij.modules.platform</depends>
