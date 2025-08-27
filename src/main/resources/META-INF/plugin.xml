@@ -10,10 +10,10 @@
     </description>
 
     <change-notes>
-        Innerclass and nullable support in functions and attributes 🚀
+        reference adjustment with nullable attribute 🚀
     </change-notes>
 
-    <idea-version since-build="242" until-build="999.*"/>
+    <idea-version since-build="232" until-build="243.*"/>
 
     <!-- Dependências -->
     <depends>com.intellij.modules.platform</depends>

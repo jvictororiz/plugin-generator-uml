@@ -134,7 +134,7 @@ fun List<UmlClass>.populateAssociative(): List<UmlClass> {
                                 currentField.type.substringAfter("<").substringBeforeLast(">")
                             } else {
                                 currentField.type
-                            }
+                            }.replace("?","")
                             itemList.name == nameType
                         }?.name
                     )
